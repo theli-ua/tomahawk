@@ -38,7 +38,7 @@ using namespace Tomahawk;
 
 QStringList EchonestGenerator::s_moods = QStringList();
 QStringList EchonestGenerator::s_styles = QStringList();
-Echonest::Genres EchonestGenerator::s_genres = Echonest::Genres();
+QStringList EchonestGenerator::s_genres = QStringList();
 QNetworkReply* EchonestGenerator::s_moodsJob = 0;
 QNetworkReply* EchonestGenerator::s_stylesJob = 0;
 QNetworkReply* EchonestGenerator::s_genresJob = 0;
@@ -700,12 +700,11 @@ EchonestGenerator::loadGenres()
     {
         if ( s_genres_lock.tryLockForRead() )
         {
-            qRegisterMetaTypeStreamOperators< Echonest::Genre >( "enGenre" );
             QVariant genres = TomahawkUtils::Cache::instance()->getData( "EchonestGenerator", "genres" );
             s_genres_lock.unlock();
-            if ( genres.isValid() && genres.canConvert< Echonest::Genres >() )
+            if ( genres.isValid() && genres.canConvert< QStringList >() )
             {
-                s_genres = genres.value< Echonest::Genres >();
+                s_genres = genres.toStringList();
             }
             else
             {
@@ -779,7 +778,7 @@ EchonestGenerator::stylesReceived()
     emit stylesSaved();
 }
 
-Echonest::Genres
+QStringList
 EchonestGenerator::genres()
 {
     return s_genres;
@@ -793,7 +792,11 @@ EchonestGenerator::genresReceived()
 
     try
     {
-        s_genres = Echonest::Genre::parseList( r );
+        Echonest::Genres genrelist = Echonest::Genre::parseList( r );
+        foreach( const Echonest::Genre& genre, genrelist )
+        {
+            s_genres << genre.name();
+        }
     }
     catch( Echonest::ParseError& e )
     {
@@ -801,8 +804,7 @@ EchonestGenerator::genresReceived()
     }
     s_genresJob = 0;
 
-    qRegisterMetaTypeStreamOperators< Echonest::Genre >( "enGenre" );
-    TomahawkUtils::Cache::instance()->putData( "EchonestGenerator", 1209600000 /* 2 weeks */, "genres", QVariant::fromValue< Echonest::Genres >( s_genres ) );
+    TomahawkUtils::Cache::instance()->putData( "EchonestGenerator", 1209600000 /* 2 weeks */, "genres", QVariant::fromValue< QStringList >( s_genres ) );
     s_genres_lock.unlock();
     emit genresSaved();
 }
