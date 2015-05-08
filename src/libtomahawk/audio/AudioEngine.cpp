@@ -574,7 +574,7 @@ AudioEngine::loadTrack( const Tomahawk::result_ptr& result )
 
     setCurrentTrack( result );
 
-    if ( !TomahawkUtils::isLocalResult( d->currentTrack->url() ) && !TomahawkUtils::isHttpResult( d->currentTrack->url() )
+    if ( !TomahawkUtils::isLocalResult( d->currentTrack->url() ) 
          && !TomahawkUtils::isRtmpResult( d->currentTrack->url() ) )
     {
         performLoadIODevice( d->currentTrack, d->currentTrack->url() );
@@ -600,7 +600,7 @@ AudioEngine::performLoadIODevice( const result_ptr& result, const QString& url )
 {
     tDebug( LOGEXTRA ) << Q_FUNC_INFO << ( result.isNull() ? QString() : url );
 
-    if ( !TomahawkUtils::isLocalResult( url ) && !TomahawkUtils::isHttpResult( url )
+    if ( !TomahawkUtils::isLocalResult( url ) 
          && !TomahawkUtils::isRtmpResult( url ) )
     {
         std::function< void ( const QString, QSharedPointer< QIODevice > ) > callback =
@@ -641,7 +641,7 @@ AudioEngine::performLoadTrack( const Tomahawk::result_ptr result, const QString 
 
     bool err = false;
     {
-        if ( !( TomahawkUtils::isLocalResult( url ) || TomahawkUtils::isHttpResult( url ) || TomahawkUtils::isRtmpResult( url )  )
+        if ( !( TomahawkUtils::isLocalResult( url ) || TomahawkUtils::isRtmpResult( url )  )
              && ( !io || io.isNull() ) )
         {
             tLog() << Q_FUNC_INFO << "Error getting iodevice for" << result->url();
@@ -655,7 +655,6 @@ AudioEngine::performLoadTrack( const Tomahawk::result_ptr result, const QString 
             emit loading( d->currentTrack );
 
             if ( !TomahawkUtils::isLocalResult( url )
-                 && !( TomahawkUtils::isHttpResult( url ) && io.isNull() )
                  && !TomahawkUtils::isRtmpResult( url ) )
             {
                 QSharedPointer<QNetworkReply> qnr = io.objectCast<QNetworkReply>();
