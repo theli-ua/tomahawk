@@ -176,14 +176,15 @@ EchonestCatalogSynchronizer::songCreateFinished()
         return;
     }
 
-    QString sql( "SELECT file.id, track.name, artist.name, album.name "
-                 "FROM file, artist, track, file_join "
-                 "LEFT OUTER JOIN album "
-                 "ON file_join.album = album.id "
-                 "WHERE file.id = file_join.file "
-                 "AND file_join.artist = artist.id "
-                 "AND file_join.track = track.id "
-                 "AND file.source IS NULL");
+    //QString sql( "SELECT file.id, track.name, artist.name, album.name "
+                 //"FROM file, artist, track, file_join "
+                 //"LEFT OUTER JOIN album "
+                 //"ON file_join.album = album.id "
+                 //"WHERE file.id = file_join.file "
+                 //"AND file_join.artist = artist.id "
+                 //"AND file_join.track = track.id "
+                 //"AND file.source IS NULL");
+    QString sql( "select DISTINCT social_attributes.id, track.name, artist.name, ''  from social_attributes, track, artist where track.id = social_attributes.id and track.artist = artist.id and social_attributes.k = 'Love' and social_attributes.v='true'");
     DatabaseCommand_GenericSelect* cmd = new DatabaseCommand_GenericSelect( sql, DatabaseCommand_GenericSelect::Track, true );
     connect( cmd, SIGNAL( rawData( QList< QStringList > ) ), this, SLOT( rawTracksAdd( QList< QStringList > ) ) );
     Database::instance()->enqueue( Tomahawk::dbcmd_ptr( cmd ) );
