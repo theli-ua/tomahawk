@@ -27,6 +27,7 @@
 #include "database/DatabaseCommand_LoadFiles.h"
 #include "database/DatabaseCommand_SetTrackAttributes.h"
 #include "utils/Logger.h"
+#include "audio/AudioEngine.h"
 
 #include "PlaylistEntry.h"
 #include "Query.h"
@@ -54,8 +55,10 @@ EchonestCatalogSynchronizer::EchonestCatalogSynchronizer( QObject *parent )
     qRegisterMetaType<QList<QStringList> >("QList<QStringList>");
 
     connect( TomahawkSettings::instance(), SIGNAL( changed() ), this, SLOT( checkSettingsChanged() ) );
-    connect( SourceList::instance()->getLocal()->dbCollection().data(), SIGNAL( tracksAdded( QList<unsigned int> ) ), this, SLOT( tracksAdded( QList<unsigned int> ) ), Qt::QueuedConnection );
-    connect( SourceList::instance()->getLocal()->dbCollection().data(), SIGNAL( tracksRemoved( QList<unsigned int> ) ), this, SLOT( tracksRemoved( QList<unsigned int> ) ), Qt::QueuedConnection );
+    //connect( SourceList::instance()->getLocal()->dbCollection().data(), SIGNAL( tracksAdded( QList<unsigned int> ) ), this, SLOT( tracksAdded( QList<unsigned int> ) ), Qt::QueuedConnection );
+    //connect( SourceList::instance()->getLocal()->dbCollection().data(), SIGNAL( tracksRemoved( QList<unsigned int> ) ), this, SLOT( tracksRemoved( QList<unsigned int> ) ), Qt::QueuedConnection );
+    connect( AudioEngine::instance(), SIGNAL( loading( Tomahawk::result_ptr ) ), SLOT( setResult( Tomahawk::result_ptr ) ) );
+    connect( AudioEngine::instance(), SIGNAL( stopped() ), SLOT( onStop() ) );
 
     const QByteArray artist = TomahawkSettings::instance()->value( "collection/artistCatalog" ).toByteArray();
     const QByteArray song = TomahawkSettings::instance()->value( "collection/songCatalog" ).toByteArray();
@@ -176,14 +179,6 @@ EchonestCatalogSynchronizer::songCreateFinished()
         return;
     }
 
-    //QString sql( "SELECT file.id, track.name, artist.name, album.name "
-                 //"FROM file, artist, track, file_join "
-                 //"LEFT OUTER JOIN album "
-                 //"ON file_join.album = album.id "
-                 //"WHERE file.id = file_join.file "
-                 //"AND file_join.artist = artist.id "
-                 //"AND file_join.track = track.id "
-                 //"AND file.source IS NULL");
     QString sql( "select DISTINCT social_attributes.id, track.name, artist.name, ''  from social_attributes, track, artist where track.id = social_attributes.id and track.artist = artist.id and social_attributes.k = 'Love' and social_attributes.v='true'");
     DatabaseCommand_GenericSelect* cmd = new DatabaseCommand_GenericSelect( sql, DatabaseCommand_GenericSelect::Track, true );
     connect( cmd, SIGNAL( rawData( QList< QStringList > ) ), this, SLOT( rawTracksAdd( QList< QStringList > ) ) );
