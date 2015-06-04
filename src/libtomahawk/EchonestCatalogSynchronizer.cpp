@@ -27,7 +27,6 @@
 #include "database/DatabaseCommand_LoadFiles.h"
 #include "database/DatabaseCommand_SetTrackAttributes.h"
 #include "utils/Logger.h"
-#include "audio/AudioEngine.h"
 
 #include "PlaylistEntry.h"
 #include "Query.h"
@@ -57,8 +56,6 @@ EchonestCatalogSynchronizer::EchonestCatalogSynchronizer( QObject *parent )
     connect( TomahawkSettings::instance(), SIGNAL( changed() ), this, SLOT( checkSettingsChanged() ) );
     //connect( SourceList::instance()->getLocal()->dbCollection().data(), SIGNAL( tracksAdded( QList<unsigned int> ) ), this, SLOT( tracksAdded( QList<unsigned int> ) ), Qt::QueuedConnection );
     //connect( SourceList::instance()->getLocal()->dbCollection().data(), SIGNAL( tracksRemoved( QList<unsigned int> ) ), this, SLOT( tracksRemoved( QList<unsigned int> ) ), Qt::QueuedConnection );
-    connect( AudioEngine::instance(), SIGNAL( loading( Tomahawk::result_ptr ) ), SLOT( setResult( Tomahawk::result_ptr ) ) );
-    connect( AudioEngine::instance(), SIGNAL( stopped() ), SLOT( onStop() ) );
 
     const QByteArray artist = TomahawkSettings::instance()->value( "collection/artistCatalog" ).toByteArray();
     const QByteArray song = TomahawkSettings::instance()->value( "collection/songCatalog" ).toByteArray();
