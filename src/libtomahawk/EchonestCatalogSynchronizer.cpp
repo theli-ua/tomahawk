@@ -179,7 +179,7 @@ EchonestCatalogSynchronizer::songCreateFinished()
         return;
     }
 
-    QString sql( "select DISTINCT social_attributes.id, track.name, artist.name, ''  from social_attributes, track, artist where track.id = social_attributes.id and track.artist = artist.id and social_attributes.k = 'Love' and social_attributes.v='true'");
+    QString sql( "SELECT track.id, track.name, artist.name, source FROM social_attributes, track, artist WHERE social_attributes.id = track.id AND artist.id = track.artist AND social_attributes.k = 'Love' AND social_attributes.v = 'true'  AND social_attributes.v = 'true' and social_attributes.source IS NULL GROUP BY track.id");
     DatabaseCommand_GenericSelect* cmd = new DatabaseCommand_GenericSelect( sql, DatabaseCommand_GenericSelect::Track, true );
     connect( cmd, SIGNAL( rawData( QList< QStringList > ) ), this, SLOT( rawTracksAdd( QList< QStringList > ) ) );
     Database::instance()->enqueue( Tomahawk::dbcmd_ptr( cmd ) );

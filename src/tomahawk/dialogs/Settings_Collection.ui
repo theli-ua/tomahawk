@@ -112,7 +112,7 @@
  and stations based on your personal taste profile.</string>
        </property>
        <property name="text">
-        <string>Upload Collection info to enable personalized &quot;User Radio&quot;</string>
+        <string>Upload Favorites info to enable personalized &quot;User Radio&quot;</string>
        </property>
       </widget>
      </item>
