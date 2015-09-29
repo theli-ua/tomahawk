@@ -177,6 +177,10 @@ MusicBrainzPlugin::gotReleaseGroupsSlot()
             for ( int i = 0; i < releaseGroupsNL.count(); i++ )
             {
                 QString groupTitle = releaseGroupsNL.at(i).firstChildElement("title").text();
+                if (!releaseGroupsNL.at(i).firstChildElement("disambiguation").isNull())
+                {
+                    groupTitle = releaseGroupsNL.at(i).firstChildElement("disambiguation").text();
+                }
                 QString a = releaseGroupsNL.at(i).firstChildElement( "artist-credit" ).firstChildElement( "name-credit" ).firstChildElement( "artist" ).firstChildElement( "name" ).text();
                 QString id = releaseGroupsNL.at(i).firstChildElement( "artist-credit" ).firstChildElement( "name-credit" ).firstChildElement( "artist" ).attribute( "id" );
                 if ( !albums.contains( groupTitle ) && id == popularId && a.normalized( QString::NormalizationForm_KC ).compare(hash["artist"].normalized( QString::NormalizationForm_KC ), Qt::CaseInsensitive) == 0 )
