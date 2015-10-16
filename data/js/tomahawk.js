@@ -42,6 +42,12 @@ Tomahawk.apiVersion = "0.2.2";
 //Statuses considered a success for HTTP request
 var httpSuccessStatuses = [200, 201];
 
+// install RSVP.Promise as global Promise
+// TODO: WE WANT THIS REMOVED ONCE WE HAVE ES6 SUPPORT
+if(window.Promise === undefined) {
+    window.Promise = window.RSVP.Promise;
+}
+
 // install RSVP error handler for uncaught(!) errors
 RSVP.on('error', function (reason) {
     var resolverName = "";
