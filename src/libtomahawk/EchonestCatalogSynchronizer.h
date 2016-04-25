@@ -55,10 +55,11 @@ public:
 signals:
     void knownCatalogsChanged();
 
-private slots:
-    void checkSettingsChanged();
+public slots:
     void tracksAdded( const QList<unsigned int>& );
     void tracksRemoved( const QList<unsigned int>& );
+private slots:
+    void checkSettingsChanged();
 
     void loadedResults( const QList<Tomahawk::result_ptr>& results );
 

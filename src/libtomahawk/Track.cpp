@@ -28,6 +28,7 @@
 #include "database/DatabaseCommand_ModifyInboxEntry.h"
 #include "resolvers/Resolver.h"
 #include "utils/Logger.h"
+#include "EchonestCatalogSynchronizer.h"
 
 #include "Album.h"
 #include "Pipeline.h"
@@ -501,6 +502,15 @@ Track::setLoved( bool loved, bool postToInfoSystem )
 {
     Q_D( Track );
     d->trackData->setLoved( loved );
+
+    if ( loved )
+    {
+        EchonestCatalogSynchronizer::instance()->tracksAdded( { trackId() } );
+    }
+    else
+    {
+        EchonestCatalogSynchronizer::instance()->tracksRemoved( { trackId() } );
+    }
 
     if ( postToInfoSystem )
     {
